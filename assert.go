@@ -1,12 +1,14 @@
 package assert
+
 // Testing helpers for doozer.
 
 import (
-	"github.com/kr/pretty"
-	"reflect"
-	"testing"
-	"runtime"
 	"fmt"
+	"reflect"
+	"runtime"
+	"testing"
+
+	"github.com/kr/pretty"
 )
 
 func assert(t *testing.T, result bool, f func(), cd int) {
@@ -73,4 +75,14 @@ func Panic(t *testing.T, err interface{}, fn func()) {
 		equal(t, err, recover(), 3)
 	}()
 	fn()
+}
+
+type TestTable map[interface{}]interface{}
+
+func (tb TestTable) Test(t *testing.T, f func(cond interface{}) (interface{}, error)) {
+	for condi, okRes := range tb {
+		res, err := f(condi)
+		equal(t, nil, err, 1, condi)
+		equal(t, okRes, res, 1, condi)
+	}
 }
